@@ -30,12 +30,27 @@ public class ScreenManager {
                 }
             }
         }
+        return null;
     }
     // get current DM
     public DisplayMode getCurrentDisplayMode() {
         return vc.getDisplayMode();
     }
-    
+
+    // checks if 2 modes match each other
+    public boolean displayModesMatch(DisplayMode m1, DisplayMode m2){
+        if(m1.getWidth() != m2.getWidth() || m1.getHeight() != m2.getHeight()){
+            return false;
+        }
+        if(m1.getBitDepth() != DisplayMode.BIT_DEPTH_MULTI && m2.getBitDepth() != DisplayMode.BIT_DEPTH_MULTI && m1.getBitDepth() != m2.getBitDepth()){
+            return false;
+
+        }
+        if(m1.getRefreshRate() != DisplayMode.REFRESH_RATE_UNKNOWN && m2.getRefreshRate() != DisplayMode.REFRESH_RATE_UNKNOWN && m1.getRefreshRate() != m2.getRefreshRate()){
+            return false;
+        }
+        return true;
+    }
 
 
 
