@@ -52,6 +52,4 @@ public class ScreenManager {
         return true;
     }
 
-
-
 }
