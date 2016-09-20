@@ -23,7 +23,7 @@ public class ScreenManager {
     // compare DM passed in to vc DM and see if they match
     public DisplayMode findFirstCompatibleMode(DisplayMode modes[]) {
         DisplayMode goodModes[] = vc.getDisplayModes();
-        for(int x =0; x<mdoes.length;x++) {
+        for(int x =0; x<modes.length;x++) {
             for(int y =0;y<goodModes.length;y++){
                 if (displayModesMatch(modes[x], goodModes[y])) {
                     return modes[x];
@@ -51,5 +51,86 @@ public class ScreenManager {
         }
         return true;
     }
+    // make frame full screen
+    public void setFullScreen(DisplayMode dm){
+      JFrame f = new JFrame();
+      f.setUndecorated(true);
+      f.setIgnoreRepaint(true);
+      f.setResizable(false);
+      vc.setFullScreenWindow(f);
 
+      if(dm != null && vc.isDisplayChangeSupported()){
+        try{
+          vc.setDisplayMode(dm);
+        }catch(Exception ex){}
+      }
+      f.createBufferStrategy(2);
+    }
+
+    // we will set graphics object = to this
+    public Graphics2D getGraphics(){
+      Window w = vc.getFullScreenWindow();
+      if(w != null){
+        BufferStrategy s = w.getBufferStrategy();
+        return (Graphics2D)s.getDrawGraphics();
+      }else{
+        return null;
+      }
+    }
+
+    // updates display
+    public void update() {
+      Window w = vc.getFullScreenWindow();
+      if (w != null) {
+        BufferStrategy s = w.getBufferStrategy();
+        if (!s.contentsLost()) {
+          s.show();
+        }
+      }
+    }
+
+    // returns fll screen window
+    public Window getFullScreenWindow() {
+      return vc.getFullScreenWindow();
+    }
+
+    // get width of window
+    public int getWidth() {
+      Window w = vc.getFullScreenWindow();
+      if(w != null) {
+        return w.getWidth();
+      } else {
+        return 0;
+      }
+    }
+
+    // get height of window
+    public int getHeight() {
+      Window w = vc.getFullScreenWindow();
+      if(w != null) {
+        return w.getHeight();
+      } else {
+        return 0;
+      }
+    }
+
+    // get out of full screen
+    public void restoreScreen() {
+      Window w =  vc.getFullScreenWindow();
+      if (w != null) {
+        w.dispose();
+      }
+      vc.setFullScreenWindow(null);
+    }
+
+    // create image compatible with monitor
+    public BufferedImage createCompatibleImage(int w, int h, int t){
+      Window win = vc.getFullScreenWindow();
+      if(win != null){
+        GraphicsConfiguration gc = win.getGraphicsConfiguration();
+        return gc.createCompatibleImage(w,h,t);
+
+      }
+      return null;
+    }
 }
